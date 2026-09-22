@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="sl">
 <head>
@@ -5,716 +6,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Preverjanje varnosti gesel – SRC d.o.o. Oddelek za kibernetsko varnost.">
 <title>Preverjanje varnosti gesel – SRC</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300a3e0'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
-<style>
-:root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3341;
-    --txt:#e6edf3; --muted:#8b949e; --accent:#00a3e0; --accent2:#0086bd;
-    --ok:#3fb950; --warn:#d29922; --bad:#f85149; --mid:#db8b2c;
-    --chip:#21262d; --radius:14px; --shadow:0 8px 30px rgba(0,0,0,.35);
-  }
-  @media (prefers-color-scheme: light){
-    :root:not([data-theme="dark"]){
-      --bg:#f4f8fc; --panel:#ffffff; --panel2:#f1f6fb; --line:#e2e8f0;
-      --txt:#0f172a; --muted:#5a6b82; --accent:#0086bd; --accent2:#006a97;
-      --chip:#eef4fa; --shadow:0 8px 30px rgba(15,23,42,.10);
-    }
-  }
-  :root[data-theme="light"]{
-      --bg:#f4f8fc; --panel:#ffffff; --panel2:#f1f6fb; --line:#e2e8f0;
-      --txt:#0f172a; --muted:#5a6b82; --accent:#0086bd; --accent2:#006a97;
-      --chip:#eef4fa; --shadow:0 8px 30px rgba(15,23,42,.10);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased}
-  .wrap{max-width:820px; margin:0 auto; padding:24px 16px 64px}
-
-  .hero{position:relative; text-align:center; padding:8px 0 20px}
-  .hero .logo{max-width:220px; width:55%; height:auto; margin:6px auto 14px; display:block}
-  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero .logo{filter:brightness(1.12)}}
-  :root[data-theme="dark"] .hero .logo{filter:brightness(1.12)}
-  .herotools{position:absolute; top:0; right:0; display:flex; gap:6px}
-  .themebtn,.langbtn{background:var(--chip);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 11px;cursor:pointer;font-size:13px;font-weight:600}
-  h1{font-size:24px; margin:0 0 8px}
-  .lead{color:var(--muted); font-size:14.5px; margin:0 auto; max-width:640px}
-
-  /* step indicator */
-  .steps{display:flex; align-items:center; justify-content:center; gap:10px; margin:6px 0 22px}
-  .step{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted); font-weight:600}
-  .step .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--chip);border:1px solid var(--line);font-size:13px}
-  .step.active{color:var(--txt)}
-  .step.active .dot{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
-  .step.done .dot{background:var(--ok);color:#fff;border-color:transparent}
-  .stepline{flex:0 0 40px;height:2px;background:var(--line)}
-
-  .card{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:18px}
-  .sectiontitle{font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:20px 0 8px; font-weight:700}
-  .sectiontitle.main{font-size:16px; text-transform:none; letter-spacing:0; color:var(--txt); margin:2px 0 14px}
-  .wizstep{animation:slideIn .25s ease}
-  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .navrow{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:4px}
-
-  .inputrow{display:flex; gap:8px}
-  .pwfield{position:relative; flex:1}
-  input[type=text],input[type=password]{width:100%; padding:14px 92px 14px 14px; font-size:16px; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); outline:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  input[type=number]{padding:8px 10px; width:80px; border-radius:8px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); font-family:inherit}
-  input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,.25)}
-  .pwtools{position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:2px}
-  .icobtn{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:16px;padding:6px;border-radius:8px}
-  .icobtn:hover{background:var(--chip);color:var(--txt)}
-  .btn{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border:0; border-radius:12px; padding:11px 18px; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap}
-  .btn.secondary{background:var(--chip); color:var(--txt); border:1px solid var(--line)}
-  .btn:active{transform:translateY(1px)}
-
-  .meter{margin-top:18px}
-  .meterbar{height:12px; border-radius:99px; background:var(--chip); overflow:hidden}
-  .meterfill{height:100%; width:0%; border-radius:99px; transition:width .35s, background .35s; background:var(--bad)}
-  .meterhead{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; gap:8px; flex-wrap:wrap}
-  .verdict{font-weight:700; font-size:16px}
-  .verdictbig{font-size:20px; font-weight:800; margin-bottom:6px}
-
-  .stats{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
-  .chip{background:var(--chip); border:1px solid var(--line); border-radius:99px; padding:6px 12px; font-size:12.5px; color:var(--muted)}
-  .chip b{color:var(--txt)}
-
-  /* policy */
-  .policy,.details2{margin-top:16px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--panel2)}
-  .policy summary{cursor:pointer; font-size:13.5px; font-weight:600; color:var(--txt)}
-  .polgrid{display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; margin-top:6px}
-  .pol{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
-  .poltog{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--muted); cursor:pointer}
-  .polresult{margin-top:12px; font-size:13.5px}
-  .polbadge{display:inline-block; padding:5px 12px; border-radius:99px; font-weight:700; font-size:13px}
-  .polbadge.pass{background:rgba(63,185,80,.15); color:var(--ok)}
-  .polbadge.fail{background:rgba(248,81,73,.15); color:var(--bad)}
-  .polfail{color:var(--bad); font-size:13px; margin-top:6px}
-
-  .checks{display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-top:6px}
-  @media(max-width:560px){.checks{grid-template-columns:1fr}}
-  .chk{display:flex; align-items:flex-start; gap:8px; font-size:13.5px; color:var(--muted)}
-  .chk .mark{width:18px;height:18px;border-radius:50%;flex:0 0 18px;display:grid;place-items:center;font-size:11px;border:1.5px solid var(--line); margin-top:1px}
-  .chk.pass{color:var(--txt)}
-  .chk.pass .mark{background:var(--ok);border-color:var(--ok);color:#fff}
-  .chk.fail .mark{color:var(--bad);border-color:var(--bad)}
-
-  .recs{list-style:none; padding:0; margin:8px 0 0}
-  .recs li{display:flex; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:11px; margin-bottom:8px; background:var(--panel2); font-size:13.5px}
-  .recs li .ic{font-size:16px}
-  .recs li.good{border-color:rgba(63,185,80,.4)}
-  .recs li.danger{border-color:rgba(248,81,73,.5); background:rgba(248,81,73,.08)}
-
-  .ach{display:flex; flex-wrap:wrap; gap:8px}
-  .badge{display:flex; align-items:center; gap:7px; padding:7px 12px; border-radius:99px; font-size:12.5px; border:1px solid var(--line); background:var(--chip); color:var(--muted); opacity:.5; transition:.25s}
-  .badge.on{opacity:1; color:var(--txt); border-color:var(--accent); background:rgba(0,163,224,.12)}
-  .badge .e{font-size:15px}
-
-  .scen{display:grid; gap:10px; margin-top:16px}
-  .scenrow{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:11px 14px}
-  .scenrow .l{display:flex; align-items:center; gap:10px; min-width:0}
-  .scenrow .ico{font-size:17px}
-  .scenrow .name b{display:block; font-size:13.5px}
-  .scenrow .name span{color:var(--muted); font-size:11.5px}
-  .scenrow .time{font-family:ui-monospace,monospace; font-weight:700; font-size:14px; text-align:right; white-space:nowrap}
-
-  /* viz */
-  .viz{display:grid; gap:6px; margin-top:14px}
-  .vizrow{display:flex; align-items:center; gap:10px; font-size:12px}
-  .vizrow .lab{width:64px; color:var(--muted); text-align:right; font-family:ui-monospace,monospace}
-  .vizrow .track{flex:1; height:20px; background:var(--chip); border-radius:6px; overflow:hidden; position:relative}
-  .vizrow .bar{height:100%; border-radius:6px; background:linear-gradient(90deg,var(--accent2),var(--accent)); transition:width .4s}
-  .vizrow .val{width:120px; font-family:ui-monospace,monospace; font-size:11.5px; color:var(--txt)}
-  .vizrow.you .lab{color:var(--accent); font-weight:800}
-  .vizrow.you .track{outline:2px solid var(--accent); outline-offset:1px}
-
-  /* compare */
-  .cmpgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-  @media(max-width:560px){.cmpgrid{grid-template-columns:1fr}}
-  .cmpout{margin-top:8px; font-size:12.5px; color:var(--muted)}
-  .cmpout .mini{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;margin:6px 0}
-  .cmpout .mini i{display:block;height:100%;width:0;background:var(--bad);transition:.3s}
-  .cmpverdict{margin-top:14px; padding:12px 14px; border-radius:11px; background:var(--panel2); border:1px solid var(--line); font-size:13.5px; min-height:20px}
-
-  .genopts{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:12px 0}
-  .seg{display:inline-flex; background:var(--chip); border:1px solid var(--line); border-radius:10px; padding:3px}
-  .seg button{background:transparent;border:0;color:var(--muted);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px}
-  .seg button.active{background:var(--accent);color:#fff}
-  .rangewrap{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted)}
-  input[type=range]{accent-color:var(--accent)}
-  .toggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
-  .genout{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap}
-  .privacy{display:flex; gap:10px; align-items:center; background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:11px 14px; font-size:12.5px; color:var(--muted); margin-top:10px}
-  footer{color:var(--muted); font-size:12px; text-align:center; margin-top:26px; line-height:1.7}
-  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ok); color:#fff; padding:10px 18px; border-radius:10px; font-size:13.5px; opacity:0; pointer-events:none; transition:.3s; z-index:120}
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
-  .hidden{display:none !important}
-  .subtle{color:var(--muted); font-size:12.5px}
-  a{color:var(--accent)} code{font-family:ui-monospace,monospace}
-
-  /* educational modal */
-  .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); display:grid; place-items:center; z-index:200; padding:16px; animation:fadeIn .2s ease}
-  .modal-overlay[hidden]{display:none}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  .modal{background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--warn); border-radius:16px; max-width:480px; width:100%; padding:26px 24px; box-shadow:0 20px 60px rgba(0,0,0,.5); animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
-  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-  .modal-icon{font-size:34px; line-height:1}
-  .modal h2{font-size:19px; margin:10px 0 12px; color:var(--txt)}
-  .modal p{font-size:14px; color:var(--txt); margin:0 0 12px}
-  .modal .leaked{font-family:ui-monospace,monospace; background:rgba(248,81,73,.14); color:var(--bad); padding:2px 7px; border-radius:6px; font-weight:700; word-break:break-all}
-  .modal-lesson{background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:12px 14px; font-size:13.5px; color:var(--txt); margin:14px 0 18px; line-height:1.5}
-  .modal .btn{width:100%; padding:13px; font-size:15px}
-
-</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f81f7'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<div class="wrap">
 
-  <!-- LOGO + TITLE -->
-  <header class="hero">
-    <div class="herotools">
-      <button class="langbtn" id="langBtn" title="Language">SL / EN</button>
-      <button class="themebtn" id="themeBtn" title="Tema">🌓</button>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🔒</div>
+      <div>SRC · Kibernetska varnost
+        <small>Preverjanje varnosti gesel</small>
+      </div>
     </div>
-    <img class="logo" src="data:image/png;base64,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" alt="SRC" width="220" height="114">
-    <h1 data-i18n="title">Kako varno je vaše geslo? 🔒</h1>
-    <p class="lead" data-i18n="lead">Vnesite geslo in dobite oceno moči, konkretne predloge ter realističen čas razbitja. Vse se izračuna <b>lokalno v vašem brskalniku</b> – geslo nikoli ne zapusti te naprave.</p>
+    <button class="themebtn" id="themeBtn" title="Preklopi temo">🌓 Tema</button>
   </header>
 
-  <!-- STEP INDICATOR -->
-  <div class="steps" id="stepsBar">
-    <div class="step active" data-step="1"><span class="dot">1</span> <span data-i18n="step1">Vnos in analiza</span></div>
-    <div class="stepline"></div>
-    <div class="step" data-step="2"><span class="dot">2</span> <span data-i18n="step2">Rezultati</span></div>
+  <h1>Kako varno je vaše geslo?</h1>
+  <p class="lead">Vnesite geslo in v realnem času dobite oceno moči, realističen čas razbitja za različne vrste napadov ter konkretne predloge za izboljšanje. Vse se izračuna <b>lokalno v vašem brskalniku</b> – geslo nikoli ne zapusti te naprave.</p>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <label class="fieldlabel" for="pw">Vpišite geslo za analizo</label>
+    <div class="inputrow">
+      <div class="pwfield">
+        <input type="password" id="pw" placeholder="Začnite tipkati…" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="pwtools">
+          <button class="icobtn" id="toggleVis" title="Pokaži / skrij">👁️</button>
+          <button class="icobtn" id="clearBtn" title="Počisti">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- METER -->
+    <div class="meter">
+      <div class="meterhead">
+        <div class="verdict" id="verdict">Vnesite geslo…</div>
+        <div class="subtle" id="verdictSub"></div>
+      </div>
+      <div class="meterbar"><div class="meterfill" id="fill"></div></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats" id="stats">
+      <span class="chip">Znaki: <b id="sLen">0</b></span>
+      <span class="chip">Male: <b id="sLow">0</b></span>
+      <span class="chip">Velike: <b id="sUp">0</b></span>
+      <span class="chip">Številke: <b id="sNum">0</b></span>
+      <span class="chip">Posebni: <b id="sSpec">0</b></span>
+      <span class="chip">Entropija: <b id="sEnt">0</b> bit</span>
+    </div>
   </div>
 
-  <!-- ================= STEP 1 ================= -->
-  <section class="wizstep" id="step1">
+  <!-- CRACK SCENARIOS -->
+  <div class="card" id="scenCard">
+    <div class="sectiontitle">Ocena časa razbitja</div>
+    <p class="subtle" style="margin-top:0">Koliko časa bi napadalec potreboval, da geslo ugane s surovo silo (brute-force), pri realističnih hitrostih strojne opreme. Ocena temelji na entropiji in prepoznanih vzorcih.</p>
+    <div class="scen" id="scen"></div>
+  </div>
 
-    <div class="card">
-      <div class="sectiontitle main" data-i18n="enterPw">Vpišite geslo za analizo</div>
-      <div class="inputrow">
-        <div class="pwfield">
-          <input type="password" id="pw" placeholder="…" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="phStart">
-          <div class="pwtools">
-            <button class="icobtn" id="toggleVis" title="Pokaži/skrij">👁️</button>
-            <button class="icobtn" id="clearBtn" title="Počisti">✕</button>
-          </div>
-        </div>
-      </div>
+  <!-- CHECKLIST + RECS -->
+  <div class="card">
+    <div class="sectiontitle">Kontrolni seznam</div>
+    <div class="checks" id="checks"></div>
 
-      <div class="meter">
-        <div class="meterhead">
-          <div class="verdict" id="verdict" data-i18n="enterPrompt">Vnesite geslo…</div>
-          <div class="subtle" id="verdictSub"></div>
-        </div>
-        <div class="meterbar"><div class="meterfill" id="fill"></div></div>
-      </div>
+    <div class="sectiontitle">Priporočila</div>
+    <ul class="recs" id="recs"><li class="subtle" style="border:0;background:none">Vnesite geslo za predloge.</li></ul>
 
-      <div class="stats" id="stats">
-        <span class="chip"><span data-i18n="cLen">Znaki</span>: <b id="sLen">0</b></span>
-        <span class="chip"><span data-i18n="cLow">Male</span>: <b id="sLow">0</b></span>
-        <span class="chip"><span data-i18n="cUp">Velike</span>: <b id="sUp">0</b></span>
-        <span class="chip"><span data-i18n="cNum">Številke</span>: <b id="sNum">0</b></span>
-        <span class="chip"><span data-i18n="cSpec">Posebni</span>: <b id="sSpec">0</b></span>
-        <span class="chip"><span data-i18n="cEnt">Entropija</span>: <b id="sEnt">0</b> bit</span>
-      </div>
+    <div class="sectiontitle">Dosežki</div>
+    <div class="ach" id="ach"></div>
+  </div>
 
-      <!-- policy checker -->
-      <details class="policy" id="policyBox">
-        <summary data-i18n="policyTitle">🏛️ Politika gesel organizacije (neobvezno)</summary>
-        <p class="subtle" style="margin:8px 0" data-i18n="policyDesc">Preverite geslo proti pravilom vaše organizacije.</p>
-        <div class="polgrid">
-          <label class="pol"><span data-i18n="polMinLen">Najmanjša dolžina</span>
-            <input type="number" id="polMin" min="1" max="64" value="12"></label>
-          <label class="poltog"><input type="checkbox" id="polUpper" checked> <span data-i18n="polUpper">Velike črke</span></label>
-          <label class="poltog"><input type="checkbox" id="polLower" checked> <span data-i18n="polLower">Male črke</span></label>
-          <label class="poltog"><input type="checkbox" id="polNum" checked> <span data-i18n="polNum">Številke</span></label>
-          <label class="poltog"><input type="checkbox" id="polSym" checked> <span data-i18n="polSym">Posebni znaki</span></label>
-          <label class="poltog"><input type="checkbox" id="polNoCommon" checked> <span data-i18n="polNoCommon">Ni pogosto geslo</span></label>
-        </div>
-        <div class="polresult" id="polResult"></div>
-      </details>
+  <!-- GENERATOR -->
+  <div class="card">
+    <div class="sectiontitle">Generator močnih gesel</div>
+    <div class="seg" id="modeSeg">
+      <button data-mode="password" class="active">Naključno geslo</button>
+      <button data-mode="passphrase">Geslo-fraza</button>
     </div>
 
-    <!-- GENERATOR -->
-    <div class="card">
-      <div class="sectiontitle main" data-i18n="genTitle">Generator močnih gesel</div>
-      <div class="seg" id="modeSeg">
-        <button data-mode="password" class="active" data-i18n="genPw">Naključno geslo</button>
-        <button data-mode="passphrase" data-i18n="genPhrase">Geslo-fraza</button>
+    <div class="genopts">
+      <div class="rangewrap">
+        <span id="lenLabel">Dolžina: 20</span>
+        <input type="range" id="lenRange" min="8" max="40" value="20">
       </div>
-      <div class="genopts">
-        <div class="rangewrap"><span id="lenLabel"></span>
-          <input type="range" id="lenRange" min="8" max="40" value="20"></div>
+    </div>
+
+    <div class="genopts" id="pwOpts">
+      <label class="toggle"><input type="checkbox" id="optUpper" checked> Velike (A–Z)</label>
+      <label class="toggle"><input type="checkbox" id="optLower" checked> Male (a–z)</label>
+      <label class="toggle"><input type="checkbox" id="optNum" checked> Številke (0–9)</label>
+      <label class="toggle"><input type="checkbox" id="optSym" checked> Posebni (!@#…)</label>
+      <label class="toggle"><input type="checkbox" id="optAmb"> Izpusti dvoumne (l,1,O,0)</label>
+    </div>
+
+    <div class="genopts hidden" id="phOpts">
+      <div class="rangewrap"><span id="wordsLabel">Besede: 5</span>
+        <input type="range" id="wordsRange" min="3" max="8" value="5"></div>
+      <label class="toggle"><input type="checkbox" id="phCap" checked> Velika začetnica</label>
+      <label class="toggle"><input type="checkbox" id="phNum" checked> Dodaj številko</label>
+    </div>
+
+    <div class="genout">
+      <div class="pwfield" style="flex:1">
+        <input type="text" id="genField" readonly placeholder="Kliknite Ustvari…">
       </div>
-      <div class="genopts" id="pwOpts">
-        <label class="toggle"><input type="checkbox" id="optUpper" checked> A–Z</label>
-        <label class="toggle"><input type="checkbox" id="optLower" checked> a–z</label>
-        <label class="toggle"><input type="checkbox" id="optNum" checked> 0–9</label>
-        <label class="toggle"><input type="checkbox" id="optSym" checked> !@#</label>
-        <label class="toggle"><input type="checkbox" id="optAmb"> <span data-i18n="optAmb">Izpusti dvoumne</span></label>
-      </div>
-      <div class="genopts hidden" id="phOpts">
-        <div class="rangewrap"><span id="wordsLabel"></span>
-          <input type="range" id="wordsRange" min="3" max="8" value="5"></div>
-        <label class="toggle"><input type="checkbox" id="phCap" checked> <span data-i18n="phCap">Velika začetnica</span></label>
-        <label class="toggle"><input type="checkbox" id="phNum" checked> <span data-i18n="phNum">Dodaj številko</span></label>
-      </div>
-      <div class="genout">
-        <div class="pwfield" style="flex:1"><input type="text" id="genField" readonly data-i18n-ph="phGen"></div>
-        <button class="btn secondary" id="genBtn">🔄 <span data-i18n="btnGen">Ustvari</span></button>
-        <button class="btn" id="copyBtn">📋 <span data-i18n="btnCopy">Kopiraj</span></button>
-      </div>
-      <div class="privacy" data-i18n="genPrivacy">🔐 Uporablja kriptografsko varen vir naključja (crypto.getRandomValues).</div>
-      <div style="margin-top:10px"><button class="btn secondary" id="useGen">↑ <span data-i18n="btnUse">Uporabi za analizo</span></button></div>
+      <button class="btn secondary" id="genBtn">🔄 Ustvari</button>
+      <button class="btn" id="copyBtn">📋 Kopiraj</button>
     </div>
-
-    <div class="navrow">
-      <span></span>
-      <button class="btn" id="toStep2" data-i18n="next">Naprej: rezultati →</button>
-    </div>
-  </section>
-
-  <!-- ================= STEP 2 ================= -->
-  <section class="wizstep hidden" id="step2">
-
-    <div class="card">
-      <div class="sectiontitle main" data-i18n="resultTitle">Kontrolni seznam, priporočila in dosežki</div>
-      <div class="verdictbig" id="verdictBig"></div>
-      <div class="sectiontitle" data-i18n="checklist">Kontrolni seznam</div>
-      <div class="checks" id="checks"></div>
-      <div class="sectiontitle" data-i18n="recs">Priporočila</div>
-      <ul class="recs" id="recs"></ul>
-      <div class="sectiontitle" data-i18n="ach">Dosežki</div>
-      <div class="ach" id="ach"></div>
-    </div>
-
-    <div class="card" id="scenCard">
-      <div class="sectiontitle main" data-i18n="crackTitle">Ocena časa razbitja</div>
-      <p class="subtle" style="margin-top:0" data-i18n="crackDesc">Koliko časa bi napadalec potreboval za razbitje pri realističnih hitrostih strojne opreme.</p>
-      <div class="scen" id="scen"></div>
-    </div>
-
-    <!-- length -> time visualization -->
-    <div class="card">
-      <div class="sectiontitle main" data-i18n="vizTitle">Vpliv dolžine na čas razbitja</div>
-      <p class="subtle" style="margin-top:0" data-i18n="vizDesc">Vsak dodaten znak eksponentno podaljša čas razbitja (offline GPU napad). Vaša dolžina je označena.</p>
-      <div class="viz" id="viz"></div>
-    </div>
-
-    <!-- compare two passwords -->
-    <div class="card">
-      <div class="sectiontitle main" data-i18n="cmpTitle">Primerjava dveh gesel</div>
-      <div class="cmpgrid">
-        <div>
-          <div class="pwfield"><input type="password" id="cmpA" placeholder="Geslo A" autocomplete="off" data-i18n-ph="cmpAph"></div>
-          <div class="cmpout" id="cmpOutA"></div>
-        </div>
-        <div>
-          <div class="pwfield"><input type="password" id="cmpB" placeholder="Geslo B" autocomplete="off" data-i18n-ph="cmpBph"></div>
-          <div class="cmpout" id="cmpOutB"></div>
-        </div>
-      </div>
-      <div class="cmpverdict" id="cmpVerdict"></div>
-    </div>
-
-    <div class="navrow">
-      <button class="btn secondary" id="toStep1">← <span data-i18n="back">Nazaj</span></button>
-      <button class="btn" id="pdfBtn">📄 <span data-i18n="btnPdf">Prenesi poročilo (PDF)</span></button>
-    </div>
-  </section>
+    <div class="privacy">🔐 Generator uporablja kriptografsko varen vir naključja (<code>crypto.getRandomValues</code>) – ne <code>Math.random</code>.</div>
+    <div style="margin-top:10px"><button class="btn secondary" id="useGen">↑ Uporabi zgeneriran za analizo</button></div>
+  </div>
 
   <footer>
-    <span data-i18n="footPrivacy">🔐 Ta stran ne shranjuje in ne pošilja vaših gesel. Vsa obdelava poteka lokalno v brskalniku.</span><br>
-    <span data-i18n="footBy">Projekt razvija Oddelek za kibernetsko varnost <b>SRC d.o.o.</b> · Namenjeno ozaveščanju in izobraževanju.</span>
+    🔐 Ta stran ne shranjuje in ne pošilja vaših gesel. Vsa obdelava poteka lokalno v brskalniku.<br>
+    Projekt razvija Oddelek za kibernetsko varnost <b>SRC d.o.o.</b> · Namenjeno ozaveščanju in izobraževanju.
   </footer>
 </div>
-<div class="toast" id="toast">✓</div>
-
-<!-- IZOBRAŽEVALNI POPUP -->
-<div class="modal-overlay" id="eduOverlay" role="dialog" aria-modal="true" aria-labelledby="eduTitle" hidden>
-  <div class="modal">
-    <div class="modal-icon">⚠️</div>
-    <h2 id="eduTitle" data-i18n="eduTitle">Izobraževalno opozorilo · SRC d.o.o.</h2>
-    <p><b data-i18n="eduOops">UPS!</b> <span data-i18n="eduLine1a">Vaše geslo</span> <span class="leaked" id="eduPw"></span> <span data-i18n="eduLine1b">je bilo pravkar »zabeleženo in poslano napadalcu«.</span></p>
-    <p data-i18n="eduLine2">Ampak pisalo je, da se ne beleži? Točno tako – nasedli ste taktiki socialnega inženiringa. To je bil preizkus. Vaše geslo ni bilo nikamor shranjeno ali poslano.</p>
-    <div class="modal-lesson" data-i18n="eduLesson">🎯 Nauk: Nikoli ne vpisujte pravih gesel v spletne obrazce, ki jim ne zaupate 100 %. Za preizkušanje uporabite izmišljeno geslo.</div>
-    <button class="btn" id="eduClose" data-i18n="eduBtn">Razumem</button>
-  </div>
-</div>
-
-<script>
-/* ============================================================
-   SRC Password Security Checker – 2-step wizard, i18n (SL/EN)
-   100% client-side. Ne shranjuje in ne pošilja gesel.
-   ============================================================ */
-const $=id=>document.getElementById(id);
-
-/* ---------- i18n ---------- */
-const I18N={
- sl:{
-  title:"Kako varno je vaše geslo? 🔒",
-  lead:'Vnesite geslo in dobite oceno moči, konkretne predloge ter realističen čas razbitja. Vse se izračuna <b>lokalno v vašem brskalniku</b> – geslo nikoli ne zapusti te naprave.',
-  step1:"Vnos in analiza", step2:"Rezultati",
-  enterPw:"Vpišite geslo za analizo", phStart:"Začnite tipkati…", enterPrompt:"Vnesite geslo…",
-  cLen:"Znaki",cLow:"Male",cUp:"Velike",cNum:"Številke",cSpec:"Posebni",cEnt:"Entropija",
-  policyTitle:"🏛️ Politika gesel organizacije (neobvezno)",
-  policyDesc:"Preverite geslo proti pravilom vaše organizacije.",
-  polMinLen:"Najmanjša dolžina",polUpper:"Velike črke",polLower:"Male črke",polNum:"Številke",polSym:"Posebni znaki",polNoCommon:"Ni pogosto geslo",
-  polPass:"Geslo USTREZA politiki",polFail:"Geslo NE ustreza politiki",
-  genTitle:"Generator močnih gesel",genPw:"Naključno geslo",genPhrase:"Geslo-fraza",
-  optAmb:"Izpusti dvoumne",phCap:"Velika začetnica",phNum:"Dodaj številko",
-  phGen:"Kliknite Ustvari…",btnGen:"Ustvari",btnCopy:"Kopiraj",btnUse:"Uporabi za analizo",
-  genPrivacy:"🔐 Uporablja kriptografsko varen vir naključja (crypto.getRandomValues).",
-  next:"Naprej: rezultati →",back:"Nazaj",
-  resultTitle:"Kontrolni seznam, priporočila in dosežki",checklist:"Kontrolni seznam",recs:"Priporočila",ach:"Dosežki",
-  crackTitle:"Ocena časa razbitja",crackDesc:"Koliko časa bi napadalec potreboval za razbitje pri realističnih hitrostih strojne opreme.",
-  vizTitle:"Vpliv dolžine na čas razbitja",vizDesc:"Vsak dodaten znak eksponentno podaljša čas razbitja (offline GPU napad). Vaša dolžina je označena.",
-  cmpTitle:"Primerjava dveh gesel",cmpAph:"Geslo A",cmpBph:"Geslo B",
-  btnPdf:"Prenesi poročilo (PDF)",
-  footPrivacy:"🔐 Ta stran ne shranjuje in ne pošilja vaših gesel. Vsa obdelava poteka lokalno v brskalniku.",
-  footBy:"Projekt razvija Oddelek za kibernetsko varnost <b>SRC d.o.o.</b> · Namenjeno ozaveščanju in izobraževanju.",
-  eduTitle:"Izobraževalno opozorilo · SRC d.o.o.",eduOops:"UPS!",eduLine1a:"Vaše geslo",eduLine1b:"je bilo pravkar »zabeleženo in poslano napadalcu«.",
-  eduLine2:"Ampak pisalo je, da se ne beleži? Točno tako – nasedli ste taktiki socialnega inženiringa. To je bil preizkus. Vaše geslo ni bilo nikamor shranjeno ali poslano.",
-  eduLesson:"🎯 Nauk: Nikoli ne vpisujte pravih gesel v spletne obrazce, ki jim ne zaupate 100 %. Za preizkušanje uporabite izmišljeno geslo.",eduBtn:"Razumem",
-  verdicts:["Zelo šibko","Šibko","Zmerno","Močno","Zelo močno"],
-  score:"ocena",bits:"bitov",length:"Dolžina",
-  cmpAstronger:"Geslo A je močnejše 💪",cmpBstronger:"Geslo B je močnejše 💪",cmpEqual:"Gesli sta enako močni",
-  copied:"Kopirano ✓",enterFirst:"Najprej vnesite geslo",
-  scen:[["🌐","Spletni napad (omejen)","~100/s"],["⚡","Spletni napad (hiter)","~10 tisoč/s"],["🖥️","Offline (počasen hash)","bcrypt/argon2"],["🎮","Offline GPU (hiter hash)","~100 milijard/s"],["🏭","Napadalec z mnogo GPU","~10 bilijonov/s"]],
-  chk:["Vsaj 12 znakov","16+ znakov (priporočeno)","Male in velike črke","Vsebuje številke","Vsebuje posebne znake","Ni v seznamu pogostih gesel","Brez zaporedij / ponavljanj","Brez letnic"],
-  rec:{common:"🚨 To je eno najpogostejših gesel na svetu. Napadalec ga preizkusi med prvimi – takoj ga zamenjajte.",dictword:"📖 Geslo vsebuje pogosto besedo iz slovarja (tudi z zamenjavo črk s številkami). Napadalci te vzorce poznajo.",short:"📏 Podaljšajte geslo na vsaj 12–16 znakov. Dolžina prispeva k varnosti bolj kot kompleksnost.",case:"🔠 Mešajte male in velike črke.",num:"🔢 Dodajte nekaj številk (a ne le na koncu).",spec:"✳️ Dodajte posebne znake (npr. ! ? # % &).",sequence:"➡️ Izogibajte se zaporedjem tipk in črk (abc, 123, qwertz).",repeat:"🔁 Izogibajte se ponavljajočim se znakom (aaa, 111).",year:"📅 Ne uporabljajte letnic ali rojstnih datumov.",g1:"✅ Odlično – to je močno geslo.",g2:"🗝️ Uporabite upravitelja gesel in za vsak račun drugačno geslo.",g3:"📱 Kjer je mogoče, vklopite dvostopenjsko avtentikacijo (2FA).",tip:"💡 Namig: geslo-fraza iz več naključnih besed je enostavna za pomnjenje in zelo močna. Uporabite generator."},
-  badges:["12+ znakov","20+ znakov","Vse vrste znakov","Ni slovarsko","80+ bitov entropije","Trdnjava (ocena 4)"],
-  pdfTitle:"Poročilo o varnosti gesla",pdfNo:"To poročilo ne vsebuje analiziranega gesla.",pdfDate:"Datum",pdfScenario:"Scenarij napada",pdfAssume:"Predpostavka",pdfTime:"Čas"
- },
- en:{
-  title:"How secure is your password? 🔒",
-  lead:'Enter a password to get a strength rating, concrete suggestions and a realistic crack time. Everything is computed <b>locally in your browser</b> – the password never leaves this device.',
-  step1:"Input & analysis", step2:"Results",
-  enterPw:"Enter a password to analyze", phStart:"Start typing…", enterPrompt:"Enter a password…",
-  cLen:"Chars",cLow:"Lower",cUp:"Upper",cNum:"Digits",cSpec:"Special",cEnt:"Entropy",
-  policyTitle:"🏛️ Organization password policy (optional)",
-  policyDesc:"Check the password against your organization's rules.",
-  polMinLen:"Minimum length",polUpper:"Uppercase",polLower:"Lowercase",polNum:"Digits",polSym:"Special chars",polNoCommon:"Not a common password",
-  polPass:"Password MEETS the policy",polFail:"Password does NOT meet the policy",
-  genTitle:"Strong password generator",genPw:"Random password",genPhrase:"Passphrase",
-  optAmb:"Exclude ambiguous",phCap:"Capitalize",phNum:"Add a number",
-  phGen:"Click Generate…",btnGen:"Generate",btnCopy:"Copy",btnUse:"Use for analysis",
-  genPrivacy:"🔐 Uses a cryptographically secure random source (crypto.getRandomValues).",
-  next:"Next: results →",back:"Back",
-  resultTitle:"Checklist, recommendations and achievements",checklist:"Checklist",recs:"Recommendations",ach:"Achievements",
-  crackTitle:"Crack time estimate",crackDesc:"How long an attacker would need to crack it at realistic hardware speeds.",
-  vizTitle:"Effect of length on crack time",vizDesc:"Each extra character exponentially increases crack time (offline GPU attack). Your length is highlighted.",
-  cmpTitle:"Compare two passwords",cmpAph:"Password A",cmpBph:"Password B",
-  btnPdf:"Download report (PDF)",
-  footPrivacy:"🔐 This page does not store or send your passwords. All processing happens locally in the browser.",
-  footBy:"Developed by the Cybersecurity Department of <b>SRC d.o.o.</b> · For awareness and education.",
-  eduTitle:"Educational warning · SRC d.o.o.",eduOops:"OOPS!",eduLine1a:"Your password",eduLine1b:"was just “logged and sent to an attacker”.",
-  eduLine2:"But it said nothing is logged? Exactly – you fell for a social-engineering tactic. This was a test. Your password was NOT stored or sent anywhere.",
-  eduLesson:"🎯 Lesson: Never enter your real passwords into web forms you don't 100% trust. Use a fake password for testing.",eduBtn:"Got it",
-  verdicts:["Very weak","Weak","Fair","Strong","Very strong"],
-  score:"score",bits:"bits",length:"Length",
-  cmpAstronger:"Password A is stronger 💪",cmpBstronger:"Password B is stronger 💪",cmpEqual:"Both are equally strong",
-  copied:"Copied ✓",enterFirst:"Enter a password first",
-  scen:[["🌐","Online attack (throttled)","~100/s"],["⚡","Online attack (fast)","~10k/s"],["🖥️","Offline (slow hash)","bcrypt/argon2"],["🎮","Offline GPU (fast hash)","~100 billion/s"],["🏭","Attacker with many GPUs","~10 trillion/s"]],
-  chk:["At least 12 chars","16+ chars (recommended)","Upper & lower case","Contains digits","Contains special chars","Not a common password","No sequences / repeats","No years"],
-  rec:{common:"🚨 This is one of the most common passwords in the world. Attackers try it first – change it now.",dictword:"📖 Password contains a common dictionary word (even with letter/number substitutions). Attackers know these patterns.",short:"📏 Extend to at least 12–16 chars. Length matters more than complexity.",case:"🔠 Mix upper and lower case.",num:"🔢 Add some digits (not only at the end).",spec:"✳️ Add special characters (e.g. ! ? # % &).",sequence:"➡️ Avoid keyboard/letter sequences (abc, 123, qwerty).",repeat:"🔁 Avoid repeated characters (aaa, 111).",year:"📅 Don't use years or birth dates.",g1:"✅ Excellent – this is a strong password.",g2:"🗝️ Use a password manager and a unique password per account.",g3:"📱 Enable two-factor authentication (2FA) wherever possible.",tip:"💡 Tip: a passphrase of several random words is easy to remember and very strong. Use the generator."},
-  badges:["12+ chars","20+ chars","All char types","Not dictionary","80+ bits entropy","Fortress (score 4)"],
-  pdfTitle:"Password security report",pdfNo:"This report does not contain the analyzed password.",pdfDate:"Date",pdfScenario:"Attack scenario",pdfAssume:"Assumption",pdfTime:"Time"
- }
-};
-let LANG = "sl";
-try{ const s=localStorage.getItem("src_pw_lang"); if(s==="en"||s==="sl") LANG=s; }catch{}
-function t(){ return I18N[LANG]; }
-
-/* ---------- Blocklists ---------- */
-const COMMON = new Set(["geslo","password","passwort","qwerty","asdf","123456","12345678","123456789","1234567890",
-"111111","000000","abc123","admin","welcome","letmein","iloveyou","dragon","monkey","master","login","guest","user",
-"sunshine","princess","football","superman","batman","trustno1","1q2w3e","zaq12wsx","qwertz","slovenija","ljubljana",
-"maribor","triglav","novak","olimpija","doncic","pogacar","roglic","test","pivo","sonce","luna","geslo123","slo123",
-"celje","kranj","koper","piran","bled","morje","gora","kava","zmaga","domovina","secret","computer","internet"]);
-const SEQ = ["abcdefghijklmnopqrstuvwxyz","qwertzuiopasdfghjklyxcvbnm","qwertyuiopasdfghjklzxcvbnm","0123456789"];
-const LEET = {a:"@4",e:"3",i:"1!",o:"0",s:"$5",t:"7",l:"1",b:"8",g:"9"};
-
-function poolSize(pw){ let s=0;
-  if(/[a-z]/.test(pw)) s+=26; if(/[A-Z]/.test(pw)) s+=26; if(/[0-9]/.test(pw)) s+=10;
-  if(/[^a-zA-Z0-9]/.test(pw)) s+=33; if(/[^\x00-\x7F]/.test(pw)) s+=40; return Math.max(s,1); }
-function normalize(pw){ let s=pw.toLowerCase(); for(const k in LEET){ for(const ch of LEET[k]) s=s.split(ch).join(k); } return s; }
-function hasSequence(pw){ const low=pw.toLowerCase();
-  for(const seq of SEQ){ for(let i=0;i+3<=seq.length;i++){ const f=seq.slice(i,i+4);
-    if(low.includes(f)) return true; if(low.includes(f.split("").reverse().join(""))) return true; } } return false; }
-function hasRepeat(pw){ return /(.)\1{2,}/.test(pw); }
-function looksLikeYear(pw){ return /(19|20)\d{2}/.test(pw); }
-function isDictionary(pw){ const n=normalize(pw);
-  if(COMMON.has(n)) return "exact"; for(const w of COMMON){ if(w.length>=4 && n.includes(w)) return "contains"; } return null; }
-
-function analyze(pw){
-  const len=pw.length;
-  const counts={lower:(pw.match(/[a-z]/g)||[]).length,upper:(pw.match(/[A-Z]/g)||[]).length,num:(pw.match(/[0-9]/g)||[]).length,spec:(pw.match(/[^a-zA-Z0-9]/g)||[]).length};
-  const pool=poolSize(pw); let baseEntropy=len>0?len*Math.log2(pool):0; const weaknesses=[]; let penalty=0;
-  const dict=isDictionary(pw);
-  if(dict==="exact"){ penalty+=baseEntropy*0.85; weaknesses.push("common"); }
-  else if(dict==="contains"){ penalty+=Math.min(baseEntropy*0.35,14); weaknesses.push("dictword"); }
-  if(hasSequence(pw)){ penalty+=Math.min(baseEntropy*0.25,10); weaknesses.push("sequence"); }
-  if(hasRepeat(pw)){ penalty+=Math.min(baseEntropy*0.2,8); weaknesses.push("repeat"); }
-  if(looksLikeYear(pw)){ penalty+=4; weaknesses.push("year"); }
-  if(len>0 && len<8){ penalty+=6; weaknesses.push("short"); }
-  const classes=[counts.lower>0,counts.upper>0,counts.num>0,counts.spec>0].filter(Boolean).length;
-  if(classes<=1 && len>0) penalty+=Math.min(baseEntropy*0.15,6);
-  let eff=Math.max(baseEntropy-penalty,0); if(len===0) eff=0;
-  const guesses=len?Math.pow(2,eff)/2:0;
-  let score; if(eff<28)score=0; else if(eff<36)score=1; else if(eff<60)score=2; else if(eff<128)score=3; else score=4;
-  if(dict==="exact") score=0;
-  return {len,counts,pool,baseEntropy,eff,guesses,score,weaknesses,classes};
-}
-
-/* ---------- crack time ---------- */
-const RATES=[100,1e4,1e4,1e11,1e13];
-function fmtTime(sec){
-  const L=LANG;
-  if(sec<1e-3) return L==="sl"?"trenutno":"instantly";
-  if(sec<1) return L==="sl"?"manj kot sekunda":"less than a second";
-  const U = L==="sl"
-    ? [["stoletij",3155760000],["let",31557600],["mesecev",2629800],["dni",86400],["ur",3600],["minut",60],["sekund",1]]
-    : [["centuries",3155760000],["years",31557600],["months",2629800],["days",86400],["hours",3600],["minutes",60],["seconds",1]];
-  if(sec>3155760000*100){ const c=sec/3155760000; if(c>1e6) return L==="sl"?"praktično nerazbitno":"practically uncrackable";
-    return Math.round(c).toLocaleString(L)+" "+(L==="sl"?"stoletij":"centuries"); }
-  for(const [lab,s] of U){ if(sec>=s){ return Math.floor(sec/s).toLocaleString(L)+" "+lab; } }
-  return L==="sl"?"trenutno":"instantly";
-}
-function timeColor(sec){ if(sec<3600) return "var(--bad)"; if(sec<86400*30) return "var(--warn)"; if(sec<31557600*100) return "var(--mid)"; return "var(--ok)"; }
-
-/* ---------- checklist / recs / badges ---------- */
-function checklist(a){ return [
-  a.len>=12, a.len>=16, a.counts.upper>0&&a.counts.lower>0, a.counts.num>0, a.counts.spec>0,
-  !a.weaknesses.includes("common")&&!a.weaknesses.includes("dictword"),
-  !a.weaknesses.includes("sequence")&&!a.weaknesses.includes("repeat"),
-  !a.weaknesses.includes("year") ]; }
-function recommend(a){
-  if(a.len===0) return []; const R=t().rec; const r=[];
-  if(a.weaknesses.includes("common")) r.push({txt:R.common,danger:true});
-  if(a.weaknesses.includes("dictword")) r.push({txt:R.dictword});
-  if(a.len<12) r.push({txt:R.short});
-  if(a.counts.upper===0||a.counts.lower===0) r.push({txt:R.case});
-  if(a.counts.num===0) r.push({txt:R.num});
-  if(a.counts.spec===0) r.push({txt:R.spec});
-  if(a.weaknesses.includes("sequence")) r.push({txt:R.sequence});
-  if(a.weaknesses.includes("repeat")) r.push({txt:R.repeat});
-  if(a.weaknesses.includes("year")) r.push({txt:R.year});
-  if(r.length===0){ r.push({txt:R.g1,good:true}); r.push({txt:R.g2,good:true}); r.push({txt:R.g3,good:true}); }
-  else r.push({txt:R.tip,good:true});
-  return r;
-}
-const BADGE_TEST=[a=>a.len>=12,a=>a.len>=20,a=>a.classes===4,a=>a.len>0&&!a.weaknesses.includes("common")&&!a.weaknesses.includes("dictword"),a=>a.eff>=80,a=>a.score===4];
-const BADGE_EMOJI=["📏","📐","🎨","🛡️","🔥","🏰"];
-
-let LAST=null;
-
-/* ---------- render step 1 (live) ---------- */
-function renderLive(pw){
-  const a=analyze(pw); LAST=a; const T=t();
-  $("sLen").textContent=a.len; $("sLow").textContent=a.counts.lower; $("sUp").textContent=a.counts.upper;
-  $("sNum").textContent=a.counts.num; $("sSpec").textContent=a.counts.spec; $("sEnt").textContent=Math.round(a.eff);
-  const v=T.verdicts[a.score]; const cols=["var(--bad)","var(--bad)","var(--warn)","var(--mid)","var(--ok)"];
-  const fill=$("fill"); fill.style.width=(a.len?(a.score+1)*20:0)+"%"; fill.style.background=cols[a.score];
-  if(a.len===0){ $("verdict").textContent=T.enterPrompt; $("verdict").style.color="var(--muted)"; $("verdictSub").textContent=""; }
-  else{ $("verdict").textContent=v; $("verdict").style.color=cols[a.score]; $("verdictSub").textContent=T.score+" "+a.score+"/4 · ~"+Math.round(a.eff)+" "+T.bits; }
-  renderPolicy(a,pw);
-}
-
-/* ---------- policy checker ---------- */
-function renderPolicy(a,pw){
-  const box=$("polResult"); if(!box) return; const T=t();
-  if(pw.length===0){ box.innerHTML=""; return; }
-  const min=Math.max(1,+$("polMin").value||1);
-  const fails=[];
-  if(a.len<min) fails.push((LANG==="sl"?"Prekratko (< ":"Too short (< ")+min+")");
-  if($("polUpper").checked && a.counts.upper===0) fails.push(T.polUpper);
-  if($("polLower").checked && a.counts.lower===0) fails.push(T.polLower);
-  if($("polNum").checked && a.counts.num===0) fails.push(T.polNum);
-  if($("polSym").checked && a.counts.spec===0) fails.push(T.polSym);
-  if($("polNoCommon").checked && (a.weaknesses.includes("common")||a.weaknesses.includes("dictword"))) fails.push(T.polNoCommon);
-  if(fails.length===0){ box.innerHTML=`<span class="polbadge pass">✓ ${T.polPass}</span>`; }
-  else{ box.innerHTML=`<span class="polbadge fail">✕ ${T.polFail}</span><div class="polfail">• ${fails.join("<br>• ")}</div>`; }
-}
-
-/* ---------- render step 2 ---------- */
-function renderResults(){
-  const a=LAST||analyze($("pw").value); const T=t();
-  const v=T.verdicts[a.score]; const cols=["var(--bad)","var(--bad)","var(--warn)","var(--mid)","var(--ok)"];
-  $("verdictBig").textContent = a.len? v+" · "+Math.round(a.eff)+" "+T.bits : T.enterPrompt;
-  $("verdictBig").style.color = a.len? cols[a.score] : "var(--muted)";
-
-  const cl=checklist(a), cbox=$("checks"); cbox.innerHTML="";
-  cl.forEach((ok,i)=>{ const d=document.createElement("div"); d.className="chk "+(ok?"pass":(a.len?"fail":""));
-    d.innerHTML=`<span class="mark">${ok?"✓":(a.len?"✕":"")}</span><span>${T.chk[i]}</span>`; cbox.appendChild(d); });
-
-  const rec=recommend(a), rbox=$("recs"); rbox.innerHTML="";
-  if(rec.length===0) rbox.innerHTML=`<li class="subtle" style="border:0;background:none">${T.enterPrompt}</li>`;
-  rec.forEach(r=>{ const li=document.createElement("li"); if(r.good)li.className="good"; if(r.danger)li.className="danger"; li.textContent=r.txt; rbox.appendChild(li); });
-
-  const abox=$("ach"); abox.innerHTML="";
-  BADGE_TEST.forEach((fn,i)=>{ const on=a.len>0&&fn(a); const d=document.createElement("div"); d.className="badge "+(on?"on":"");
-    d.innerHTML=`<span class="e">${BADGE_EMOJI[i]}</span><span>${T.badges[i]}</span>`; abox.appendChild(d); });
-
-  const scen=$("scen"); scen.innerHTML="";
-  if(a.len===0){ scen.innerHTML=`<div class="subtle">${T.enterPrompt}</div>`; }
-  else T.scen.forEach((s,i)=>{ const sec=a.guesses/RATES[i]; const row=document.createElement("div"); row.className="scenrow";
-    row.innerHTML=`<div class="l"><span class="ico">${s[0]}</span><span class="name"><b>${s[1]}</b><span>${s[2]}</span></span></div><span class="time" style="color:${timeColor(sec)}">${fmtTime(sec)}</span>`;
-    scen.appendChild(row); });
-
-  renderViz(a);
-}
-
-/* ---------- length -> time visualization ---------- */
-function renderViz(a){
-  const viz=$("viz"); viz.innerHTML=""; if(a.len===0){ viz.innerHTML=`<div class="subtle">${t().enterPrompt}</div>`; return; }
-  const pool=a.pool||26; const gpu=1e11;
-  const lengths=[6,8,10,12,14,16,20,24];
-  if(!lengths.includes(a.len)) lengths.push(a.len);
-  lengths.sort((x,y)=>x-y);
-  const secs=lengths.map(L=>Math.pow(2, L*Math.log2(pool))/2/gpu);
-  const maxLog=Math.max(...secs.map(s=>Math.log10(Math.max(s,1e-6))));
-  const minLog=Math.min(...secs.map(s=>Math.log10(Math.max(s,1e-6))));
-  const span=Math.max(maxLog-minLog,1);
-  lengths.forEach((L,i)=>{
-    const s=secs[i]; const lg=Math.log10(Math.max(s,1e-6));
-    const w=Math.max(4, ((lg-minLog)/span)*100);
-    const row=document.createElement("div"); row.className="vizrow"+(L===a.len?" you":"");
-    row.innerHTML=`<span class="lab">${L} ${LANG==="sl"?"zn.":"ch."}</span><span class="track"><span class="bar" style="width:${w}%"></span></span><span class="val">${fmtTime(s)}</span>`;
-    viz.appendChild(row);
-  });
-}
-
-/* ---------- compare two passwords ---------- */
-function renderCompare(){
-  const T=t(); const a=analyze($("cmpA").value), b=analyze($("cmpB").value);
-  const cols=["var(--bad)","var(--bad)","var(--warn)","var(--mid)","var(--ok)"];
-  function fill(box,x){ if(x.len===0){ $(box).innerHTML=""; return; }
-    const sec=x.guesses/1e11;
-    $(box).innerHTML=`${T.verdicts[x.score]} · ${Math.round(x.eff)} ${T.bits}<div class="mini"><i style="width:${(x.score+1)*20}%;background:${cols[x.score]}"></i></div>GPU: ${fmtTime(sec)}`;
-  }
-  fill("cmpOutA",a); fill("cmpOutB",b);
-  const cv=$("cmpVerdict");
-  if(a.len===0||b.len===0){ cv.textContent=""; return; }
-  if(a.eff>b.eff+2) cv.innerHTML="🅰️ "+T.cmpAstronger;
-  else if(b.eff>a.eff+2) cv.innerHTML="🅱️ "+T.cmpBstronger;
-  else cv.textContent=T.cmpEqual;
-}
-
-/* ---------- generator ---------- */
-function secureInt(max){ const arr=new Uint32Array(1); const limit=Math.floor(4294967296/max)*max; let x; do{ crypto.getRandomValues(arr); x=arr[0]; }while(x>=limit); return x%max; }
-function pick(s){ return s[secureInt(s.length)]; }
-function genPassword(){
-  const len=+$("lenRange").value; let sets=[]; const amb=$("optAmb").checked;
-  let U="ABCDEFGHIJKLMNOPQRSTUVWXYZ",L="abcdefghijklmnopqrstuvwxyz",N="0123456789",S="!@#$%^&*-_=+?";
-  if(amb){U=U.replace(/[IO]/g,"");L=L.replace(/[lo]/g,"");N=N.replace(/[01]/g,"");}
-  if($("optUpper").checked)sets.push(U); if($("optLower").checked)sets.push(L); if($("optNum").checked)sets.push(N); if($("optSym").checked)sets.push(S);
-  if(sets.length===0)sets.push(L); const all=sets.join(""); let out=[];
-  for(const s of sets)out.push(pick(s)); while(out.length<len)out.push(pick(all));
-  for(let i=out.length-1;i>0;i--){const j=secureInt(i+1);[out[i],out[j]]=[out[j],out[i]];}
-  return out.slice(0,len).join("");
-}
-const WORDS=["jabolko","gora","reka","modra","postelja","konj","baterija","oblak","zvezda","kamen","veter","ogenj","snops","lisica","hrast","zvon","most","luna","sonce","srce","kolo","knjiga","kava","deznik","gozd","morje","pesek","tiger","riba","ptica","cvet","list","koren","zima","poletje","sever","jug","mesec","polje","hisa","vrata","okno","ura","zemlja","nebo","dolina","otok","jezero","slap","mavrica","kompas","sidro","perje","megla","iskra","valj"];
-function genPassphrase(){ const n=+$("wordsRange").value,cap=$("phCap").checked,num=$("phNum").checked; let w=[];
-  for(let i=0;i<n;i++){ let x=WORDS[secureInt(WORDS.length)]; if(cap)x=x.charAt(0).toUpperCase()+x.slice(1); w.push(x); }
-  let o=w.join("-"); if(num)o+="-"+secureInt(100); return o; }
-let genMode="password";
-function generate(){ const v=genMode==="password"?genPassword():genPassphrase(); $("genField").value=v; return v; }
-
-/* ---------- PDF ---------- */
-function exportPDF(){
-  const a=LAST||analyze(""); const T=t();
-  if(a.len===0){ toast(T.enterFirst); return; }
-  const v=T.verdicts[a.score]; const colHex=["#f85149","#f85149","#d29922","#db8b2c","#3fb950"][a.score];
-  const rows=T.scen.map((s,i)=>{ const sec=a.guesses/RATES[i]; return `<tr><td>${s[1]}</td><td>${s[2]}</td><td style="font-weight:700">${fmtTime(sec)}</td></tr>`; }).join("");
-  const recs=recommend(a).map(r=>`<li>${r.txt}</li>`).join("");
-  const now=new Date().toLocaleString(LANG);
-  const html=`<!doctype html><html lang="${LANG}"><head><meta charset="utf-8"><title>${T.pdfTitle} – SRC</title>
-  <style>body{font-family:Arial,sans-serif;color:#111;margin:40px;line-height:1.5}h1{color:#0086bd;font-size:22px}
-  h2{font-size:15px;margin-top:24px;border-bottom:2px solid #0086bd;padding-bottom:4px}
-  .badge{display:inline-block;padding:6px 14px;border-radius:20px;color:#fff;font-weight:700}
-  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}td,th{border:1px solid #ddd;padding:8px;text-align:left}
-  th{background:#f1f6fb}.muted{color:#666;font-size:12px}ul{font-size:13px}.stat{display:inline-block;margin-right:16px;font-size:13px}
-  .foot{margin-top:30px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:10px}</style></head>
-  <body onload="window.print()"><h1>🔒 ${T.pdfTitle}</h1>
-  <p class="muted">SRC d.o.o. · ${T.pdfDate}: ${now}</p><p>${T.pdfNo}</p>
-  <h2>${T.resultTitle}</h2><p><span class="badge" style="background:${colHex}">${v} (${a.score}/4)</span></p>
-  <p class="stat">${T.length}: <b>${a.len}</b></p><p class="stat">${T.cEnt}: <b>${Math.round(a.eff)} ${T.bits}</b></p>
-  <p class="stat">${T.cLow}/${T.cUp}/${T.cNum}/${T.cSpec}: <b>${a.counts.lower}/${a.counts.upper}/${a.counts.num}/${a.counts.spec}</b></p>
-  <h2>${T.crackTitle}</h2><table><tr><th>${T.pdfScenario}</th><th>${T.pdfAssume}</th><th>${T.pdfTime}</th></tr>${rows}</table>
-  <h2>${T.recs}</h2><ul>${recs}</ul>
-  <div class="foot">SRC d.o.o.</div></body></html>`;
-  const w=window.open("","_blank"); if(!w){ toast(LANG==="sl"?"Dovolite pojavna okna za PDF":"Allow pop-ups for PDF"); return; }
-  w.document.write(html); w.document.close();
-}
-
-/* ---------- wizard nav ---------- */
-function goStep(n){
-  $("step1").classList.toggle("hidden",n!==1);
-  $("step2").classList.toggle("hidden",n!==2);
-  document.querySelectorAll("#stepsBar .step").forEach(s=>{ const k=+s.dataset.step;
-    s.classList.toggle("active",k===n); s.classList.toggle("done",k<n); });
-  if(n===2) renderResults();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-/* ---------- i18n apply ---------- */
-function applyLang(){
-  document.documentElement.lang=LANG; const T=t();
-  document.querySelectorAll("[data-i18n]").forEach(el=>{ const k=el.getAttribute("data-i18n"); if(T[k]!=null) el.innerHTML=T[k]; });
-  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ const k=el.getAttribute("data-i18n-ph"); if(T[k]!=null) el.placeholder=T[k]; });
-  $("lenLabel").textContent=(LANG==="sl"?"Dolžina":"Length")+": "+$("lenRange").value;
-  $("wordsLabel").textContent=(LANG==="sl"?"Besede":"Words")+": "+$("wordsRange").value;
-  renderLive($("pw").value);
-  if(!$("step2").classList.contains("hidden")) renderResults();
-  renderCompare();
-}
-
-/* ---------- events ---------- */
-$("pw").addEventListener("input",e=>renderLive(e.target.value));
-["polMin","polUpper","polLower","polNum","polSym","polNoCommon"].forEach(id=>{ const el=$(id); if(el) el.addEventListener("input",()=>renderLive($("pw").value)); });
-$("toggleVis").addEventListener("click",()=>{ const f=$("pw"); f.type=f.type==="password"?"text":"password"; });
-$("clearBtn").addEventListener("click",()=>{ $("pw").value=""; renderLive(""); $("pw").focus(); });
-$("lenRange").addEventListener("input",e=>$("lenLabel").textContent=(LANG==="sl"?"Dolžina":"Length")+": "+e.target.value);
-$("wordsRange").addEventListener("input",e=>$("wordsLabel").textContent=(LANG==="sl"?"Besede":"Words")+": "+e.target.value);
-document.querySelectorAll("#modeSeg button").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll("#modeSeg button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); genMode=b.dataset.mode;
-  $("pwOpts").classList.toggle("hidden",genMode!=="password"); $("phOpts").classList.toggle("hidden",genMode!=="passphrase"); }));
-$("genBtn").addEventListener("click",generate);
-$("copyBtn").addEventListener("click",async()=>{ const v=$("genField").value||generate();
-  try{ await navigator.clipboard.writeText(v); toast(t().copied); }catch{ $("genField").select(); document.execCommand("copy"); toast(t().copied); } });
-$("useGen").addEventListener("click",()=>{ const v=$("genField").value||generate(); $("pw").value=v; $("pw").type="text"; renderLive(v); });
-$("toStep2").addEventListener("click",()=>goStep(2));
-$("toStep1").addEventListener("click",()=>goStep(1));
-$("pdfBtn").addEventListener("click",exportPDF);
-$("cmpA").addEventListener("input",renderCompare); $("cmpB").addEventListener("input",renderCompare);
-function toast(m){ const el=$("toast"); el.textContent=m; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1600); }
-
-$("themeBtn").addEventListener("click",()=>{ const cur=document.documentElement.getAttribute("data-theme");
-  const next=cur==="light"?"dark":(cur==="dark"?"light":"light"); document.documentElement.setAttribute("data-theme",next);
-  try{ localStorage.setItem("src_pw_theme",next); }catch{} });
-try{ const s=localStorage.getItem("src_pw_theme"); if(s) document.documentElement.setAttribute("data-theme",s); }catch{}
-$("langBtn").addEventListener("click",()=>{ LANG=LANG==="sl"?"en":"sl"; try{ localStorage.setItem("src_pw_lang",LANG); }catch{} applyLang(); });
-
-/* ---------- init ---------- */
-applyLang(); generate();
-
-/* ============================================================
-   Izobraževalni popup – sproži se 20 s po prvem vpisu v polje geslo.
-   Prikaže se enkrat. Geslo se NIKAMOR ne shrani in ne pošlje.
-   ============================================================ */
-(function(){
-  const DELAY_MS=20000; let timer=null, shown=false;
-  const pwEl=$("pw"), overlay=$("eduOverlay"); if(!pwEl||!overlay) return;
-  function showEdu(){ if(shown)return; shown=true; $("eduPw").textContent=pwEl.value||"(…)"; overlay.hidden=false; const b=$("eduClose"); if(b)b.focus(); }
-  function closeEdu(){ overlay.hidden=true; }
-  pwEl.addEventListener("input",function(){ if(timer||shown)return; timer=setTimeout(showEdu,DELAY_MS); });
-  $("eduClose").addEventListener("click",closeEdu);
-  overlay.addEventListener("click",e=>{ if(e.target===overlay) closeEdu(); });
-  document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!overlay.hidden) closeEdu(); });
-})();
-
-</script>
+<div class="toast" id="toast">Kopirano ✓</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

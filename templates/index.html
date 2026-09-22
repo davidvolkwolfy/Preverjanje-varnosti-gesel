@@ -6,124 +6,186 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Preverjanje varnosti gesel – SRC d.o.o. Oddelek za kibernetsko varnost.">
 <title>Preverjanje varnosti gesel – SRC</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f81f7'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2300a3e0'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
 <div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <div class="logo">🔒</div>
-      <div>SRC · Kibernetska varnost
-        <small>Preverjanje varnosti gesel</small>
-      </div>
+
+  <!-- LOGO + TITLE -->
+  <header class="hero">
+    <div class="herotools">
+      <button class="langbtn" id="langBtn" title="Language">SL / EN</button>
+      <button class="themebtn" id="themeBtn" title="Tema">🌓</button>
     </div>
-    <button class="themebtn" id="themeBtn" title="Preklopi temo">🌓 Tema</button>
+    <img class="logo" src="{{ url_for('static', filename='image.png') }}" alt="SRC" width="220" height="114">
+    <h1 data-i18n="title">Kako varno je vaše geslo? 🔒</h1>
+    <p class="lead" data-i18n="lead">Vnesite geslo in dobite oceno moči, konkretne predloge ter realističen čas razbitja. Vse se izračuna <b>lokalno v vašem brskalniku</b> – geslo nikoli ne zapusti te naprave.</p>
   </header>
 
-  <h1>Kako varno je vaše geslo?</h1>
-  <p class="lead">Vnesite geslo in v realnem času dobite oceno moči, realističen čas razbitja za različne vrste napadov ter konkretne predloge za izboljšanje. Vse se izračuna <b>lokalno v vašem brskalniku</b> – geslo nikoli ne zapusti te naprave.</p>
+  <!-- STEP INDICATOR -->
+  <div class="steps" id="stepsBar">
+    <div class="step active" data-step="1"><span class="dot">1</span> <span data-i18n="step1">Vnos in analiza</span></div>
+    <div class="stepline"></div>
+    <div class="step" data-step="2"><span class="dot">2</span> <span data-i18n="step2">Rezultati</span></div>
+  </div>
 
-  <!-- INPUT CARD -->
-  <div class="card">
-    <label class="fieldlabel" for="pw">Vpišite geslo za analizo</label>
-    <div class="inputrow">
-      <div class="pwfield">
-        <input type="password" id="pw" placeholder="Začnite tipkati…" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <div class="pwtools">
-          <button class="icobtn" id="toggleVis" title="Pokaži / skrij">👁️</button>
-          <button class="icobtn" id="clearBtn" title="Počisti">✕</button>
+  <!-- ================= STEP 1 ================= -->
+  <section class="wizstep" id="step1">
+
+    <div class="card">
+      <div class="sectiontitle main" data-i18n="enterPw">Vpišite geslo za analizo</div>
+      <div class="inputrow">
+        <div class="pwfield">
+          <input type="password" id="pw" placeholder="…" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="phStart">
+          <div class="pwtools">
+            <button class="icobtn" id="toggleVis" title="Pokaži/skrij">👁️</button>
+            <button class="icobtn" id="clearBtn" title="Počisti">✕</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- METER -->
-    <div class="meter">
-      <div class="meterhead">
-        <div class="verdict" id="verdict">Vnesite geslo…</div>
-        <div class="subtle" id="verdictSub"></div>
+      <div class="meter">
+        <div class="meterhead">
+          <div class="verdict" id="verdict" data-i18n="enterPrompt">Vnesite geslo…</div>
+          <div class="subtle" id="verdictSub"></div>
+        </div>
+        <div class="meterbar"><div class="meterfill" id="fill"></div></div>
       </div>
-      <div class="meterbar"><div class="meterfill" id="fill"></div></div>
-    </div>
 
-    <!-- STATS -->
-    <div class="stats" id="stats">
-      <span class="chip">Znaki: <b id="sLen">0</b></span>
-      <span class="chip">Male: <b id="sLow">0</b></span>
-      <span class="chip">Velike: <b id="sUp">0</b></span>
-      <span class="chip">Številke: <b id="sNum">0</b></span>
-      <span class="chip">Posebni: <b id="sSpec">0</b></span>
-      <span class="chip">Entropija: <b id="sEnt">0</b> bit</span>
-    </div>
-  </div>
-
-  <!-- CRACK SCENARIOS -->
-  <div class="card" id="scenCard">
-    <div class="sectiontitle">Ocena časa razbitja</div>
-    <p class="subtle" style="margin-top:0">Koliko časa bi napadalec potreboval, da geslo ugane s surovo silo (brute-force), pri realističnih hitrostih strojne opreme. Ocena temelji na entropiji in prepoznanih vzorcih.</p>
-    <div class="scen" id="scen"></div>
-  </div>
-
-  <!-- CHECKLIST + RECS -->
-  <div class="card">
-    <div class="sectiontitle">Kontrolni seznam</div>
-    <div class="checks" id="checks"></div>
-
-    <div class="sectiontitle">Priporočila</div>
-    <ul class="recs" id="recs"><li class="subtle" style="border:0;background:none">Vnesite geslo za predloge.</li></ul>
-
-    <div class="sectiontitle">Dosežki</div>
-    <div class="ach" id="ach"></div>
-  </div>
-
-  <!-- GENERATOR -->
-  <div class="card">
-    <div class="sectiontitle">Generator močnih gesel</div>
-    <div class="seg" id="modeSeg">
-      <button data-mode="password" class="active">Naključno geslo</button>
-      <button data-mode="passphrase">Geslo-fraza</button>
-    </div>
-
-    <div class="genopts">
-      <div class="rangewrap">
-        <span id="lenLabel">Dolžina: 20</span>
-        <input type="range" id="lenRange" min="8" max="40" value="20">
+      <div class="stats" id="stats">
+        <span class="chip"><span data-i18n="cLen">Znaki</span>: <b id="sLen">0</b></span>
+        <span class="chip"><span data-i18n="cLow">Male</span>: <b id="sLow">0</b></span>
+        <span class="chip"><span data-i18n="cUp">Velike</span>: <b id="sUp">0</b></span>
+        <span class="chip"><span data-i18n="cNum">Številke</span>: <b id="sNum">0</b></span>
+        <span class="chip"><span data-i18n="cSpec">Posebni</span>: <b id="sSpec">0</b></span>
+        <span class="chip"><span data-i18n="cEnt">Entropija</span>: <b id="sEnt">0</b> bit</span>
       </div>
+
+      <!-- policy checker -->
+      <details class="policy" id="policyBox">
+        <summary data-i18n="policyTitle">🏛️ Politika gesel organizacije (neobvezno)</summary>
+        <p class="subtle" style="margin:8px 0" data-i18n="policyDesc">Preverite geslo proti pravilom vaše organizacije.</p>
+        <div class="polgrid">
+          <label class="pol"><span data-i18n="polMinLen">Najmanjša dolžina</span>
+            <input type="number" id="polMin" min="1" max="64" value="12"></label>
+          <label class="poltog"><input type="checkbox" id="polUpper" checked> <span data-i18n="polUpper">Velike črke</span></label>
+          <label class="poltog"><input type="checkbox" id="polLower" checked> <span data-i18n="polLower">Male črke</span></label>
+          <label class="poltog"><input type="checkbox" id="polNum" checked> <span data-i18n="polNum">Številke</span></label>
+          <label class="poltog"><input type="checkbox" id="polSym" checked> <span data-i18n="polSym">Posebni znaki</span></label>
+          <label class="poltog"><input type="checkbox" id="polNoCommon" checked> <span data-i18n="polNoCommon">Ni pogosto geslo</span></label>
+        </div>
+        <div class="polresult" id="polResult"></div>
+      </details>
     </div>
 
-    <div class="genopts" id="pwOpts">
-      <label class="toggle"><input type="checkbox" id="optUpper" checked> Velike (A–Z)</label>
-      <label class="toggle"><input type="checkbox" id="optLower" checked> Male (a–z)</label>
-      <label class="toggle"><input type="checkbox" id="optNum" checked> Številke (0–9)</label>
-      <label class="toggle"><input type="checkbox" id="optSym" checked> Posebni (!@#…)</label>
-      <label class="toggle"><input type="checkbox" id="optAmb"> Izpusti dvoumne (l,1,O,0)</label>
-    </div>
-
-    <div class="genopts hidden" id="phOpts">
-      <div class="rangewrap"><span id="wordsLabel">Besede: 5</span>
-        <input type="range" id="wordsRange" min="3" max="8" value="5"></div>
-      <label class="toggle"><input type="checkbox" id="phCap" checked> Velika začetnica</label>
-      <label class="toggle"><input type="checkbox" id="phNum" checked> Dodaj številko</label>
-    </div>
-
-    <div class="genout">
-      <div class="pwfield" style="flex:1">
-        <input type="text" id="genField" readonly placeholder="Kliknite Ustvari…">
+    <!-- GENERATOR -->
+    <div class="card">
+      <div class="sectiontitle main" data-i18n="genTitle">Generator močnih gesel</div>
+      <div class="seg" id="modeSeg">
+        <button data-mode="password" class="active" data-i18n="genPw">Naključno geslo</button>
+        <button data-mode="passphrase" data-i18n="genPhrase">Geslo-fraza</button>
       </div>
-      <button class="btn secondary" id="genBtn">🔄 Ustvari</button>
-      <button class="btn" id="copyBtn">📋 Kopiraj</button>
+      <div class="genopts">
+        <div class="rangewrap"><span id="lenLabel"></span>
+          <input type="range" id="lenRange" min="8" max="40" value="20"></div>
+      </div>
+      <div class="genopts" id="pwOpts">
+        <label class="toggle"><input type="checkbox" id="optUpper" checked> A–Z</label>
+        <label class="toggle"><input type="checkbox" id="optLower" checked> a–z</label>
+        <label class="toggle"><input type="checkbox" id="optNum" checked> 0–9</label>
+        <label class="toggle"><input type="checkbox" id="optSym" checked> !@#</label>
+        <label class="toggle"><input type="checkbox" id="optAmb"> <span data-i18n="optAmb">Izpusti dvoumne</span></label>
+      </div>
+      <div class="genopts hidden" id="phOpts">
+        <div class="rangewrap"><span id="wordsLabel"></span>
+          <input type="range" id="wordsRange" min="3" max="8" value="5"></div>
+        <label class="toggle"><input type="checkbox" id="phCap" checked> <span data-i18n="phCap">Velika začetnica</span></label>
+        <label class="toggle"><input type="checkbox" id="phNum" checked> <span data-i18n="phNum">Dodaj številko</span></label>
+      </div>
+      <div class="genout">
+        <div class="pwfield" style="flex:1"><input type="text" id="genField" readonly data-i18n-ph="phGen"></div>
+        <button class="btn secondary" id="genBtn">🔄 <span data-i18n="btnGen">Ustvari</span></button>
+        <button class="btn" id="copyBtn">📋 <span data-i18n="btnCopy">Kopiraj</span></button>
+      </div>
+      <div class="privacy" data-i18n="genPrivacy">🔐 Uporablja kriptografsko varen vir naključja (crypto.getRandomValues).</div>
+      <div style="margin-top:10px"><button class="btn secondary" id="useGen">↑ <span data-i18n="btnUse">Uporabi za analizo</span></button></div>
     </div>
-    <div class="privacy">🔐 Generator uporablja kriptografsko varen vir naključja (<code>crypto.getRandomValues</code>) – ne <code>Math.random</code>.</div>
-    <div style="margin-top:10px"><button class="btn secondary" id="useGen">↑ Uporabi zgeneriran za analizo</button></div>
-  </div>
+
+    <div class="navrow">
+      <span></span>
+      <button class="btn" id="toStep2" data-i18n="next">Naprej: rezultati →</button>
+    </div>
+  </section>
+
+  <!-- ================= STEP 2 ================= -->
+  <section class="wizstep hidden" id="step2">
+
+    <div class="card">
+      <div class="sectiontitle main" data-i18n="resultTitle">Kontrolni seznam, priporočila in dosežki</div>
+      <div class="verdictbig" id="verdictBig"></div>
+      <div class="sectiontitle" data-i18n="checklist">Kontrolni seznam</div>
+      <div class="checks" id="checks"></div>
+      <div class="sectiontitle" data-i18n="recs">Priporočila</div>
+      <ul class="recs" id="recs"></ul>
+      <div class="sectiontitle" data-i18n="ach">Dosežki</div>
+      <div class="ach" id="ach"></div>
+    </div>
+
+    <div class="card" id="scenCard">
+      <div class="sectiontitle main" data-i18n="crackTitle">Ocena časa razbitja</div>
+      <p class="subtle" style="margin-top:0" data-i18n="crackDesc">Koliko časa bi napadalec potreboval za razbitje pri realističnih hitrostih strojne opreme.</p>
+      <div class="scen" id="scen"></div>
+    </div>
+
+    <!-- length -> time visualization -->
+    <div class="card">
+      <div class="sectiontitle main" data-i18n="vizTitle">Vpliv dolžine na čas razbitja</div>
+      <p class="subtle" style="margin-top:0" data-i18n="vizDesc">Vsak dodaten znak eksponentno podaljša čas razbitja (offline GPU napad). Vaša dolžina je označena.</p>
+      <div class="viz" id="viz"></div>
+    </div>
+
+    <!-- compare two passwords -->
+    <div class="card">
+      <div class="sectiontitle main" data-i18n="cmpTitle">Primerjava dveh gesel</div>
+      <div class="cmpgrid">
+        <div>
+          <div class="pwfield"><input type="password" id="cmpA" placeholder="Geslo A" autocomplete="off" data-i18n-ph="cmpAph"></div>
+          <div class="cmpout" id="cmpOutA"></div>
+        </div>
+        <div>
+          <div class="pwfield"><input type="password" id="cmpB" placeholder="Geslo B" autocomplete="off" data-i18n-ph="cmpBph"></div>
+          <div class="cmpout" id="cmpOutB"></div>
+        </div>
+      </div>
+      <div class="cmpverdict" id="cmpVerdict"></div>
+    </div>
+
+    <div class="navrow">
+      <button class="btn secondary" id="toStep1">← <span data-i18n="back">Nazaj</span></button>
+      <button class="btn" id="pdfBtn">📄 <span data-i18n="btnPdf">Prenesi poročilo (PDF)</span></button>
+    </div>
+  </section>
 
   <footer>
-    🔐 Ta stran ne shranjuje in ne pošilja vaših gesel. Vsa obdelava poteka lokalno v brskalniku.<br>
-    Projekt razvija Oddelek za kibernetsko varnost <b>SRC d.o.o.</b> · Namenjeno ozaveščanju in izobraževanju.
+    <span data-i18n="footPrivacy">🔐 Ta stran ne shranjuje in ne pošilja vaših gesel. Vsa obdelava poteka lokalno v brskalniku.</span><br>
+    <span data-i18n="footBy">Projekt razvija Oddelek za kibernetsko varnost <b>SRC d.o.o.</b> · Namenjeno ozaveščanju in izobraževanju.</span>
   </footer>
 </div>
-<div class="toast" id="toast">Kopirano ✓</div>
+<div class="toast" id="toast">✓</div>
+
+<!-- IZOBRAŽEVALNI POPUP -->
+<div class="modal-overlay" id="eduOverlay" role="dialog" aria-modal="true" aria-labelledby="eduTitle" hidden>
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2 id="eduTitle" data-i18n="eduTitle">Izobraževalno opozorilo · SRC d.o.o.</h2>
+    <p><b data-i18n="eduOops">UPS!</b> <span data-i18n="eduLine1a">Vaše geslo</span> <span class="leaked" id="eduPw"></span> <span data-i18n="eduLine1b">je bilo pravkar »zabeleženo in poslano napadalcu«.</span></p>
+    <p data-i18n="eduLine2">Ampak pisalo je, da se ne beleži? Točno tako – nasedli ste taktiki socialnega inženiringa. To je bil preizkus. Vaše geslo ni bilo nikamor shranjeno ali poslano.</p>
+    <div class="modal-lesson" data-i18n="eduLesson">🎯 Nauk: Nikoli ne vpisujte pravih gesel v spletne obrazce, ki jim ne zaupate 100 %. Za preizkušanje uporabite izmišljeno geslo.</div>
+    <button class="btn" id="eduClose" data-i18n="eduBtn">Razumem</button>
+  </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

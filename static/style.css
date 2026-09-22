@@ -18,33 +18,38 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{
-    background:var(--bg); color:var(--txt);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;
-    line-height:1.55; -webkit-font-smoothing:antialiased;
-  }
+  body{background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased}
   .wrap{max-width:820px; margin:0 auto; padding:24px 16px 64px}
 
-  /* hero */
-  .hero{position:relative; text-align:center; padding:8px 0 24px}
+  .hero{position:relative; text-align:center; padding:8px 0 20px}
   .hero .logo{max-width:220px; width:55%; height:auto; margin:6px auto 14px; display:block}
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero .logo{filter:brightness(1.12)}}
   :root[data-theme="dark"] .hero .logo{filter:brightness(1.12)}
-  .themebtn{position:absolute; top:0; right:0; background:var(--chip);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 11px;cursor:pointer;font-size:15px}
+  .herotools{position:absolute; top:0; right:0; display:flex; gap:6px}
+  .themebtn,.langbtn{background:var(--chip);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 11px;cursor:pointer;font-size:13px;font-weight:600}
   h1{font-size:24px; margin:0 0 8px}
   .lead{color:var(--muted); font-size:14.5px; margin:0 auto; max-width:640px}
 
+  /* step indicator */
+  .steps{display:flex; align-items:center; justify-content:center; gap:10px; margin:6px 0 22px}
+  .step{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted); font-weight:600}
+  .step .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--chip);border:1px solid var(--line);font-size:13px}
+  .step.active{color:var(--txt)}
+  .step.active .dot{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+  .step.done .dot{background:var(--ok);color:#fff;border-color:transparent}
+  .stepline{flex:0 0 40px;height:2px;background:var(--line)}
+
   .card{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:18px}
-  .cardnum{position:absolute; top:-12px; left:18px; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; display:grid; place-items:center; font-weight:700; font-size:14px; box-shadow:var(--shadow)}
   .sectiontitle{font-size:13px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin:20px 0 8px; font-weight:700}
   .sectiontitle.main{font-size:16px; text-transform:none; letter-spacing:0; color:var(--txt); margin:2px 0 14px}
+  .wizstep{animation:slideIn .25s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .navrow{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:4px}
 
-  .inputrow{display:flex; gap:8px; align-items:stretch}
+  .inputrow{display:flex; gap:8px}
   .pwfield{position:relative; flex:1}
-  input[type=text],input[type=password]{
-    width:100%; padding:14px 92px 14px 14px; font-size:16px; border-radius:12px;
-    border:1px solid var(--line); background:var(--panel2); color:var(--txt); outline:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  }
+  input[type=text],input[type=password]{width:100%; padding:14px 92px 14px 14px; font-size:16px; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); outline:none; font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  input[type=number]{padding:8px 10px; width:80px; border-radius:8px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); font-family:inherit}
   input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,163,224,.25)}
   .pwtools{position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:2px}
   .icobtn{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:16px;padding:6px;border-radius:8px}
@@ -55,20 +60,26 @@
 
   .meter{margin-top:18px}
   .meterbar{height:12px; border-radius:99px; background:var(--chip); overflow:hidden}
-  .meterfill{height:100%; width:0%; border-radius:99px; transition:width .35s ease, background .35s ease; background:var(--bad)}
+  .meterfill{height:100%; width:0%; border-radius:99px; transition:width .35s, background .35s; background:var(--bad)}
   .meterhead{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; gap:8px; flex-wrap:wrap}
   .verdict{font-weight:700; font-size:16px}
+  .verdictbig{font-size:20px; font-weight:800; margin-bottom:6px}
 
   .stats{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
   .chip{background:var(--chip); border:1px solid var(--line); border-radius:99px; padding:6px 12px; font-size:12.5px; color:var(--muted)}
   .chip b{color:var(--txt)}
 
-  /* personal data */
-  .personal{margin-top:16px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--panel2)}
-  .personal summary{cursor:pointer; font-size:13.5px; font-weight:600; color:var(--txt)}
-  .pgrid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
-  @media(max-width:560px){.pgrid{grid-template-columns:1fr}}
-  .pinp{padding:10px 12px !important; font-size:14px !important; font-family:inherit !important}
+  /* policy */
+  .policy,.details2{margin-top:16px; border:1px dashed var(--line); border-radius:12px; padding:12px 14px; background:var(--panel2)}
+  .policy summary{cursor:pointer; font-size:13.5px; font-weight:600; color:var(--txt)}
+  .polgrid{display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; margin-top:6px}
+  .pol{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted)}
+  .poltog{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--muted); cursor:pointer}
+  .polresult{margin-top:12px; font-size:13.5px}
+  .polbadge{display:inline-block; padding:5px 12px; border-radius:99px; font-weight:700; font-size:13px}
+  .polbadge.pass{background:rgba(63,185,80,.15); color:var(--ok)}
+  .polbadge.fail{background:rgba(248,81,73,.15); color:var(--bad)}
+  .polfail{color:var(--bad); font-size:13px; margin-top:6px}
 
   .checks{display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-top:6px}
   @media(max-width:560px){.checks{grid-template-columns:1fr}}
@@ -89,13 +100,31 @@
   .badge.on{opacity:1; color:var(--txt); border-color:var(--accent); background:rgba(0,163,224,.12)}
   .badge .e{font-size:15px}
 
-  .scen{display:grid; grid-template-columns:1fr; gap:10px; margin-top:16px}
+  .scen{display:grid; gap:10px; margin-top:16px}
   .scenrow{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:11px 14px}
   .scenrow .l{display:flex; align-items:center; gap:10px; min-width:0}
   .scenrow .ico{font-size:17px}
   .scenrow .name b{display:block; font-size:13.5px}
   .scenrow .name span{color:var(--muted); font-size:11.5px}
   .scenrow .time{font-family:ui-monospace,monospace; font-weight:700; font-size:14px; text-align:right; white-space:nowrap}
+
+  /* viz */
+  .viz{display:grid; gap:6px; margin-top:14px}
+  .vizrow{display:flex; align-items:center; gap:10px; font-size:12px}
+  .vizrow .lab{width:64px; color:var(--muted); text-align:right; font-family:ui-monospace,monospace}
+  .vizrow .track{flex:1; height:20px; background:var(--chip); border-radius:6px; overflow:hidden; position:relative}
+  .vizrow .bar{height:100%; border-radius:6px; background:linear-gradient(90deg,var(--accent2),var(--accent)); transition:width .4s}
+  .vizrow .val{width:120px; font-family:ui-monospace,monospace; font-size:11.5px; color:var(--txt)}
+  .vizrow.you .lab{color:var(--accent); font-weight:800}
+  .vizrow.you .track{outline:2px solid var(--accent); outline-offset:1px}
+
+  /* compare */
+  .cmpgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:560px){.cmpgrid{grid-template-columns:1fr}}
+  .cmpout{margin-top:8px; font-size:12.5px; color:var(--muted)}
+  .cmpout .mini{height:8px;border-radius:99px;background:var(--chip);overflow:hidden;margin:6px 0}
+  .cmpout .mini i{display:block;height:100%;width:0;background:var(--bad);transition:.3s}
+  .cmpverdict{margin-top:14px; padding:12px 14px; border-radius:11px; background:var(--panel2); border:1px solid var(--line); font-size:13.5px; min-height:20px}
 
   .genopts{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:12px 0}
   .seg{display:inline-flex; background:var(--chip); border:1px solid var(--line); border-radius:10px; padding:3px}
@@ -107,14 +136,14 @@
   .genout{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap}
   .privacy{display:flex; gap:10px; align-items:center; background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:11px 14px; font-size:12.5px; color:var(--muted); margin-top:10px}
   footer{color:var(--muted); font-size:12px; text-align:center; margin-top:26px; line-height:1.7}
-  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ok); color:#fff; padding:10px 18px; border-radius:10px; font-size:13.5px; opacity:0; pointer-events:none; transition:.3s; z-index:50}
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ok); color:#fff; padding:10px 18px; border-radius:10px; font-size:13.5px; opacity:0; pointer-events:none; transition:.3s; z-index:120}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
   .hidden{display:none !important}
   .subtle{color:var(--muted); font-size:12.5px}
   a{color:var(--accent)} code{font-family:ui-monospace,monospace}
 
-  /* educational awareness modal */
-  .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); display:grid; place-items:center; z-index:100; padding:16px; animation:fadeIn .2s ease}
+  /* educational modal */
+  .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); display:grid; place-items:center; z-index:200; padding:16px; animation:fadeIn .2s ease}
   .modal-overlay[hidden]{display:none}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   .modal{background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--warn); border-radius:16px; max-width:480px; width:100%; padding:26px 24px; box-shadow:0 20px 60px rgba(0,0,0,.5); animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}

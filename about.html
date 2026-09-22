@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O projektu – SRC</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🔒</div>
+      <div>SRC · Kibernetska varnost<small>O projektu</small></div>
+    </div>
+    <a class="themebtn" href="{{ url_for('index') }}">← Nazaj</a>
+  </header>
+  <h1>O projektu</h1>
+  <div class="card">
+    <p>Ta aplikacija ozavešča o pomenu močnih gesel. Za razliko od prvotne različice
+    se <b>analiza gesla v celoti izvede v vašem brskalniku</b> – geslo se ne pošlje na strežnik.</p>
+    <div class="sectiontitle">Kako deluje ocena</div>
+    <p class="subtle">Moč gesla ocenimo z entropijo (dolžina × log₂ velikosti nabora znakov),
+    od katere odštejemo kazni za prepoznane šibkosti: pogosta/slovarska gesla (tudi z zamenjavo
+    črk s številkami), zaporedja tipk, ponavljanja, letnice in prekratka gesla. Iz efektivne
+    entropije ocenimo število potrebnih ugibanj in ga pretvorimo v čas razbitja za več
+    realističnih modelov napada.</p>
+    <div class="sectiontitle">Zasebnost</div>
+    <p class="subtle">🔐 Nič se ne shranjuje in nič ne pošilja. Generator uporablja kriptografsko
+    varen vir naključja (<code>crypto.getRandomValues</code>).</p>
+  </div>
+  <footer>Oddelek za kibernetsko varnost <b>SRC d.o.o.</b></footer>
+</div>
+</body>
+</html>
